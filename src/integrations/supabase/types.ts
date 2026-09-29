@@ -14,13 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      friends: {
+        Row: {
+          created_at: string
+          friend_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          city: string | null
+          created_at: string
+          display_name: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          display_name?: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      safe_zone_alerts: {
+        Row: {
+          city: string | null
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          message: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          message?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          message?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sightings: {
+        Row: {
+          city: string | null
+          created_at: string
+          device_key: string
+          device_name: string
+          distance_m: number | null
+          id: string
+          lat: number | null
+          lng: number | null
+          model: string | null
+          note: string | null
+          rssi: number | null
+          shared: boolean
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          device_key: string
+          device_name: string
+          distance_m?: number | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          model?: string | null
+          note?: string | null
+          rssi?: number | null
+          shared?: boolean
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          device_key?: string
+          device_name?: string
+          distance_m?: number | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          model?: string | null
+          note?: string | null
+          rssi?: number | null
+          shared?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      city_stats_today: {
+        Args: never
+        Returns: {
+          city: string
+          detections: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
