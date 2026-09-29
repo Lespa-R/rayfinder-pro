@@ -67,7 +67,12 @@ export function useScanner(options: { soundOn: boolean }) {
     const bt = getBluetooth();
     if (bt?.requestLEScan) {
       try {
-        const scan = await bt.requestLEScan({ acceptAllAdvertisements: true, keepRepeatedDevices: true });
+        const scan = await Promise.race([
+          bt.requestLEScan({ acceptAllAdvertisements: true, keepRepeatedDevices: true }),
+          new Promise<never>((_, reject) =>
+            window.setTimeout(() => reject(new Error("timeout")), 4000),
+          ),
+        ]);
         const handler = (event: Event) => {
           const adv = event as unknown as LEScanEvent;
           const name = adv.name ?? adv.device?.name ?? "";
