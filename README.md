@@ -38,8 +38,8 @@ Le scan BLE ne fonctionne pas dans l'émulateur : il faut tester sur un vrai té
    ```
 3. Générer le bundle : `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`
 4. Dans la [Play Console](https://play.google.com/console) : créer l'app, importer l'`.aab` en test interne d'abord.
-5. Fiche et formulaires :
-   - **Politique de confidentialité** : publier `PRIVACY.md` sur une URL publique et la renseigner.
+5. Fiche, visuels et formulaires : tout est prêt dans [`play-store/fiche-play-store.md`](play-store/fiche-play-store.md) (textes à copier-coller, réponses aux questionnaires) et les PNG du dossier `play-store/`.
+   - **Politique de confidentialité** : publier `docs/privacy.html` sur une URL publique (GitHub Pages sur le dossier `docs/`, ou n'importe quel hébergement) et la renseigner.
    - **Sécurité des données** : « Aucune donnée collectée ni partagée ».
    - **Nom** : éviter « Meta » ou « Ray-Ban » dans le titre (marques déposées) ; on peut les citer dans la description pour dire ce que l'app détecte.
    - Captures d'écran téléphone (au moins 2) + icône 512×512 + bannière 1024×500.

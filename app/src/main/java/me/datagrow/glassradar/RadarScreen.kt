@@ -230,7 +230,7 @@ private fun DeviceCard(device: SeenDevice, now: Long) {
         else -> "À portée (> 5 m)" to MaterialTheme.colorScheme.onSurfaceVariant
     }
     Card(
-        colors = if (device.isMeta) CardDefaults.cardColors(containerColor = AlertRed.copy(alpha = 0.10f))
+        colors = if (device.isMeta) CardDefaults.cardColors(containerColor = AlertRed.copy(alpha = 0.16f))
         else CardDefaults.cardColors(),
         modifier = Modifier.fillMaxWidth(),
     ) {
