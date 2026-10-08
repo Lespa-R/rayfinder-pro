@@ -38,7 +38,7 @@ android {
         buildConfigField("String", "SUPABASE_URL", "\"${lovableEnv["VITE_SUPABASE_URL"].orEmpty()}\"")
         buildConfigField("String", "SUPABASE_KEY", "\"${lovableEnv["VITE_SUPABASE_PUBLISHABLE_KEY"].orEmpty()}\"")
         // Site publié par Lovable (mentions légales, confidentialité, suppression de compte, Safe Zone)
-        buildConfigField("String", "SITE_URL", "\"https://rayfinder-pro.lovable.app\"")
+        buildConfigField("String", "SITE_URL", "\"https://rayfinder.datagrow.me\"")
     }
 
     signingConfigs {

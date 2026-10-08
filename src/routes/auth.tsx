@@ -58,7 +58,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Connecté");
-        navigate({ to: "/" });
+        navigate({ to: "/radar" });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Une erreur est survenue");
@@ -76,7 +76,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/" });
+    navigate({ to: "/radar" });
   }
 
   if (loading) {

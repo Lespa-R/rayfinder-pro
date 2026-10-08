@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as RadarRouteImport } from './routes/radar'
 import { Route as SafeZoneRouteImport } from './routes/safe-zone'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as SuppressionCompteRouteImport } from './routes/suppression-compte'
@@ -37,6 +38,11 @@ const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   path: '/mentions-legales',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RadarRoute = RadarRouteImport.update({
+  id: '/radar',
+  path: '/radar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SafeZoneRoute = SafeZoneRouteImport.update({
   id: '/safe-zone',
   path: '/safe-zone',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/radar': typeof RadarRoute
   '/safe-zone': typeof SafeZoneRoute
   '/stats': typeof StatsRoute
   '/suppression-compte': typeof SuppressionCompteRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/radar': typeof RadarRoute
   '/safe-zone': typeof SafeZoneRoute
   '/stats': typeof StatsRoute
   '/suppression-compte': typeof SuppressionCompteRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/radar': typeof RadarRoute
   '/safe-zone': typeof SafeZoneRoute
   '/stats': typeof StatsRoute
   '/suppression-compte': typeof SuppressionCompteRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/confidentialite'
     | '/mentions-legales'
+    | '/radar'
     | '/safe-zone'
     | '/stats'
     | '/suppression-compte'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/confidentialite'
     | '/mentions-legales'
+    | '/radar'
     | '/safe-zone'
     | '/stats'
     | '/suppression-compte'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/confidentialite'
     | '/mentions-legales'
+    | '/radar'
     | '/safe-zone'
     | '/stats'
     | '/suppression-compte'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  RadarRoute: typeof RadarRoute
   SafeZoneRoute: typeof SafeZoneRoute
   StatsRoute: typeof StatsRoute
   SuppressionCompteRoute: typeof SuppressionCompteRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MentionsLegalesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/radar': {
+      id: '/radar'
+      path: '/radar'
+      fullPath: '/radar'
+      preLoaderRoute: typeof RadarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/safe-zone': {
       id: '/safe-zone'
       path: '/safe-zone'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  RadarRoute: RadarRoute,
   SafeZoneRoute: SafeZoneRoute,
   StatsRoute: StatsRoute,
   SuppressionCompteRoute: SuppressionCompteRoute,

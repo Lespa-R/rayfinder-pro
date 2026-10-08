@@ -12,7 +12,7 @@ Cochez les cases au fur et à mesure (`[ ]` → `[x]`).
 |---|---|---|---|
 | 1 | Tester l'app sur votre téléphone | 20 min | — |
 | 2 | Vérifier votre compte Google Play (déjà ouvert) | 5 min | — |
-| 3 | Publier le site Lovable (mentions légales, confidentialité, suppression de compte) | 5 min | — |
+| 3 | Publier le site Lovable sur `rayfinder.datagrow.me` | 15 min | jusqu'à quelques heures (DNS) |
 | 4 | Créer la clé de signature et générer le fichier `.aab` | 15 min | — |
 | 5 | Créer l'application dans la Play Console | 15 min | — |
 | 6 | Remplir la fiche et les déclarations | 1 h | — |
@@ -82,18 +82,33 @@ Google exige des URL publiques pour la **politique de confidentialité** et pour
 
 | Page | Adresse une fois publiée |
 |---|---|
-| Accueil (radar web, Safe Zone, stats) | https://rayfinder-pro.lovable.app/ |
-| Mentions légales DataGrow | https://rayfinder-pro.lovable.app/mentions-legales |
-| Politique de confidentialité | https://rayfinder-pro.lovable.app/confidentialite |
-| Suppression de compte | https://rayfinder-pro.lovable.app/suppression-compte |
+| Accueil (radar web, Safe Zone, stats) | https://rayfinder.datagrow.me/ |
+| Mentions légales DataGrow | https://rayfinder.datagrow.me/mentions-legales |
+| Politique de confidentialité | https://rayfinder.datagrow.me/confidentialite |
+| Suppression de compte | https://rayfinder.datagrow.me/suppression-compte |
 
-L'app Android contient des liens vers ces adresses (en bas du radar et dans l'onglet Compte).
+L'app Android contient déjà des liens vers ces adresses : en bas du radar et dans l'onglet Compte.
+
+### 3.1 Publier le site
 
 - [ ] Ouvrez le projet : https://lovable.dev/projects/b43a81f9-b0e5-4e15-8abc-95cd062cb987
-- [ ] En haut à droite : **Publish**. Choisissez l'adresse `rayfinder-pro` (donc `rayfinder-pro.lovable.app`), puis **Publish**. Ou demandez-moi de le faire.
-- [ ] Ouvrez les 4 adresses du tableau pour vérifier qu'elles s'affichent.
-- [ ] **Si l'adresse obtenue est différente** (nom déjà pris, ou domaine personnalisé comme `rayfinder.datagrow.me`), prévenez-moi : je change l'adresse dans l'app (`SITE_URL` dans `android/app/build.gradle.kts`) avant la phase 4.
-- [ ] Dans Lovable › **Cloud › Users › Authentication settings** (ou Auth › URL Configuration) : vérifiez que la **Site URL** est l'adresse publiée. C'est vers elle que pointe le lien de confirmation des e-mails d'inscription.
+- [ ] En haut à droite : **Publish**, puis **Publish** (ou **Update** si le site est déjà publié). Lovable lui donne d'abord une adresse en `.lovable.app`.
+
+### 3.2 Brancher le domaine `rayfinder.datagrow.me`
+
+- [ ] Dans Lovable : **Project settings › Domains › Connect domain**. Saisissez `rayfinder.datagrow.me`.
+- [ ] Lovable affiche des **enregistrements DNS** à créer, en général un enregistrement **A** et un **TXT** de vérification. Gardez cette page ouverte.
+- [ ] Chez le gestionnaire du domaine `datagrow.me` (OVH, Gandi, Cloudflare, Google Domains…), ouvrez la **zone DNS** et ajoutez exactement ces enregistrements, avec `rayfinder` comme sous-domaine.
+  - Sur Cloudflare : désactivez le proxy (nuage **gris**, « DNS only ») pour ces enregistrements, sinon la vérification échoue.
+- [ ] Revenez dans Lovable et cliquez **Verify**. La propagation DNS prend de quelques minutes à quelques heures. Le certificat HTTPS est créé automatiquement ensuite.
+- [ ] Ouvrez les 4 adresses du tableau pour vérifier qu'elles s'affichent, en HTTPS.
+
+### 3.3 Régler l'adresse des e-mails de confirmation
+
+- [ ] Dans Lovable : **Cloud › Users › Authentication settings** (ou **Auth › URL Configuration**), mettez `https://rayfinder.datagrow.me` comme **Site URL**. C'est l'adresse vers laquelle pointe le lien de confirmation des e-mails d'inscription, envoyés depuis le site comme depuis l'app.
+- [ ] Ajoutez aussi `https://rayfinder.datagrow.me/**` dans les **Redirect URLs**, si ce champ existe.
+
+> Si vous changez finalement d'adresse, prévenez-moi avant la phase 4 : elle est écrite dans l'app (`SITE_URL` dans `android/app/build.gradle.kts`) et dans le site (`src/lib/site.ts`).
 
 ---
 
@@ -184,7 +199,7 @@ Toutes les réponses sont dans [`play-store/fiche-play-store.md`](play-store/fic
 
 Menu de gauche : **Règles et programmes › Contenu de l'application**. Les réponses détaillées sont dans [`play-store/fiche-play-store.md`](play-store/fiche-play-store.md). Traitez chaque bloc :
 
-- [ ] **Règles de confidentialité** : `https://rayfinder-pro.lovable.app/confidentialite`
+- [ ] **Règles de confidentialité** : `https://rayfinder.datagrow.me/confidentialite`
 - [ ] **Accès aux applications** : `Tout ou partie des fonctionnalités de mon application sont soumises à des restrictions`. Cliquez **Ajouter des instructions** :
   - Nom : `Compte de test`
   - Nom d'utilisateur / Mot de passe : le compte créé à la phase 1.3. Créez-en un dédié si vous préférez ne pas donner le vôtre.
@@ -203,7 +218,7 @@ Menu de gauche : **Règles et programmes › Contenu de l'application**. Les ré
 - [ ] **Applications d'actualités** : **Non**.
 - [ ] **Sécurité des données** : suivez le tableau de la section « Sécurité des données » du fichier fiche. En résumé :
   - Collecte de données : **Oui** ; chiffrement en transit : **Oui** ; suppression possible : **Oui**.
-  - **URL de suppression du compte** : `https://rayfinder-pro.lovable.app/suppression-compte`
+  - **URL de suppression du compte** : `https://rayfinder.datagrow.me/suppression-compte`
   - Types collectés (tous **facultatifs**, **non partagés**) : adresse e-mail, nom, ID utilisateur, position approximative, autre contenu généré par l'utilisateur, autres actions.
   - Enregistrez, puis **Envoyer**.
 - [ ] **Applications gouvernementales** : **Non**.
@@ -236,7 +251,7 @@ Menu : **Présence sur le Store › Paramètres du Store**.
 
 - [ ] **Catégorie** : `Outils`
 - [ ] **Tags** : jusqu'à 5, par exemple sécurité, confidentialité, Bluetooth.
-- [ ] **Coordonnées** : e-mail `lespa+rayfinder@datagrow.me` ; site web : `https://rayfinder-pro.lovable.app` ; téléphone facultatif.
+- [ ] **Coordonnées** : e-mail `lespa+rayfinder@datagrow.me` ; site web : `https://rayfinder.datagrow.me` ; téléphone facultatif.
 - [ ] **Enregistrer**.
 
 ### 6.4 Pays de distribution

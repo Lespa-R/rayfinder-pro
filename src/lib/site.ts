@@ -1,5 +1,6 @@
 // Informations partagées par le site et l'app Android (même éditeur, même backend).
 export const APP_NAME = "RayFinder Pro";
+export const SITE_URL = "https://rayfinder.datagrow.me";
 export const ANDROID_PACKAGE = "me.datagrow.rayfinderpro";
 export const PLAY_STORE_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 // Passer à true une fois l'app publiée en production sur Google Play.

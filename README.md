@@ -4,7 +4,7 @@ Détecteur de lunettes connectées à caméra (Ray-Ban Meta, Oakley Meta), édit
 
 | Partie | Dossier | Techno |
 |---|---|---|
-| Site web (radar web, Safe Zone, stats, pages légales) | racine | Lovable · TanStack Start · Tailwind |
+| Site web https://rayfinder.datagrow.me (présentation de l'app, radar web `/radar`, Safe Zone, stats, pages légales) | racine | Lovable · TanStack Start · Tailwind |
 | App Android | [`android/`](android/) | Kotlin · Jetpack Compose |
 | Backend commun (comptes, détections partagées, amis, alertes) | [`supabase/`](supabase/) | Lovable Cloud (Supabase) |
 | Visuels et fiche Play Store | [`play-store/`](play-store/) | HTML → PNG (`render.sh`) |

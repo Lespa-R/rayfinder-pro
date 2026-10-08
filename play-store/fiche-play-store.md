@@ -59,13 +59,13 @@ Pour modifier un visuel : éditer `play-store/src/*.html` puis lancer `play-stor
 - **Type** : Application · **Catégorie** : Outils
 - **Adresse e-mail** : lespa+rayfinder@datagrow.me
 - **Tags** : sécurité, vie privée, Bluetooth
-- **Site Web** : `https://rayfinder-pro.lovable.app`
+- **Site Web** : `https://rayfinder.datagrow.me`
 
 ## Contenu de l'application (Règles › Contenu de l'application)
 
-Le site publié par Lovable héberge les pages légales. Remplacez `https://rayfinder-pro.lovable.app` par l'adresse réelle si elle diffère.
+Le site Lovable, publié sur `rayfinder.datagrow.me`, héberge les pages légales.
 
-- **Politique de confidentialité** : `https://rayfinder-pro.lovable.app/confidentialite`
+- **Politique de confidentialité** : `https://rayfinder.datagrow.me/confidentialite`
 - **Accès aux applications** : `Tout ou partie des fonctionnalités de mon application sont soumises à des restrictions`. Fournissez **un compte de test** (e-mail + mot de passe d'un compte que vous créez vous-même sur le site, avec la confirmation e-mail faite), avec l'instruction : « Onglet Compte › Se connecter. Le radar (onglet Radar) fonctionne sans compte. »
 - **Annonces** : non, l'application ne contient pas d'annonces
 - **Classification du contenu** (questionnaire IARC) : catégorie « Toutes les autres catégories d'applications ». Violence, sexualité, langage, substances, jeux d'argent : **Non**. « Les utilisateurs peuvent-ils interagir ou échanger des informations ? » : **Oui** (pseudos visibles, alertes Safe Zone prédéfinies entre amis). « L'application partage-t-elle la position de l'utilisateur ? » : **Non** (seule une ville saisie à la main). Achats numériques : **Non**.
@@ -79,7 +79,7 @@ Le site publié par Lovable héberge les pages légales. Remplacez `https://rayf
 - L'application collecte-t-elle ou partage-t-elle des types de données utilisateur requis ? **Oui**
 - Toutes les données collectées sont-elles chiffrées en transit ? **Oui** (HTTPS)
 - Proposez-vous un moyen de demander la suppression des données ? **Oui**
-- **URL de suppression du compte** : `https://rayfinder-pro.lovable.app/suppression-compte`
+- **URL de suppression du compte** : `https://rayfinder.datagrow.me/suppression-compte`
 - La création de compte est possible dans l'app : la suppression est disponible dans l'app (Compte › Supprimer mon compte) **et** via l'URL ci-dessus, comme Google l'exige.
 
 **Types de données à cocher** — pour chacun : *Collectée* oui, *Partagée* non, *Traitement éphémère* non, *Facultative* oui (le compte est facultatif) :
