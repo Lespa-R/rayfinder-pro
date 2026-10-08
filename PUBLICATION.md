@@ -361,6 +361,7 @@ Après 14 jours avec au moins 12 testeurs, le Tableau de bord affiche **Demander
 | « Votre application cible une version d'API trop ancienne » | Demandez-moi de passer à la dernière version d'Android exigée par Google (cible actuelle : API 36) |
 | L'onglet Compte dit « Service indisponible » | Le fichier `.env` (géré par Lovable, à la racine) est absent ou incomplet au moment du build : faites `git pull`, puis régénérez l'app |
 | Le lien de confirmation d'inscription mène à une page d'erreur | Vérifiez la **Site URL** dans les réglages d'authentification Lovable Cloud (phase 3) |
+| « Your APK or Android App Bundle needs to have the package name … » | La fiche Play Console est liée à un autre nom de package, et ce lien est définitif. Créez une nouvelle app dans la Play Console : son nom de package sera fixé par le premier envoi (`me.datagrow.rayfinderpro`). Supprimez l'ancienne fiche si elle n'a jamais été publiée |
 | Vous avez perdu la clé `.jks` | Play Console › **Test et publication › Configuration › Intégrité de l'application › Signature d'application** › demander la réinitialisation de la clé d'importation |
 
 ---
