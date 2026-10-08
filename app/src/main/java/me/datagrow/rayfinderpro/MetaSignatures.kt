@@ -1,4 +1,4 @@
-package me.datagrow.glassradar
+package me.datagrow.rayfinderpro
 
 import android.bluetooth.le.ScanResult
 import android.os.ParcelUuid

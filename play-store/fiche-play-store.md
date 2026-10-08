@@ -1,4 +1,4 @@
-# Fiche Play Store — GlassRadar
+# Fiche Play Store — RayFinder Pro
 
 À copier-coller dans la Play Console (Présence sur le Store › Fiche principale).
 
@@ -6,7 +6,7 @@
 
 **Nom de l'application** (30 car. max)
 ```
-GlassRadar – Lunettes à caméra
+RayFinder Pro: lunettes caméra
 ```
 
 **Description courte** (80 car. max)
@@ -18,7 +18,7 @@ Détectez en Bluetooth les lunettes connectées à caméra autour de vous.
 ```
 Les lunettes connectées équipées d'une caméra se fondent dans le décor : impossible de savoir, à l'œil nu, si la personne en face de vous peut filmer ou photographier.
 
-GlassRadar écoute les signaux Bluetooth émis autour de vous et vous alerte dès qu'il reconnaît des lunettes connectées Meta (Ray-Ban Meta, Oakley Meta).
+RayFinder Pro écoute les signaux Bluetooth émis autour de vous et vous alerte dès qu'il reconnaît des lunettes connectées Meta (Ray-Ban Meta, Oakley Meta).
 
 FONCTIONNALITÉS
 • Alerte immédiate : le téléphone vibre et l'écran passe au rouge quand une paire est repérée
@@ -35,7 +35,7 @@ RESPECT DE LA VIE PRIVÉE
 BON À SAVOIR
 La détection repose sur les signaux Bluetooth publics émis par les lunettes. Elle n'est pas infaillible : des lunettes éteintes, en veille profonde ou rangées dans leur étui peuvent ne rien émettre. D'autres appareils Meta (casques de réalité virtuelle, par exemple) peuvent aussi être signalés.
 
-GlassRadar est une application indépendante, sans lien avec Meta Platforms, Inc. ni EssilorLuxottica. Ray-Ban, Oakley et Meta sont des marques de leurs propriétaires respectifs.
+RayFinder Pro est une application indépendante, sans lien avec Meta Platforms, Inc. ni EssilorLuxottica. Ray-Ban, Oakley et Meta sont des marques de leurs propriétaires respectifs.
 ```
 
 ## Éléments graphiques (dossier `play-store/`)
@@ -51,7 +51,7 @@ Pour modifier un visuel : éditer `play-store/src/*.html` puis lancer `play-stor
 ## Catégorisation et coordonnées
 
 - **Type** : Application · **Catégorie** : Outils
-- **Adresse e-mail** : lespa@datagrow.me
+- **Adresse e-mail** : lespa+rayfinder@datagrow.me
 - **Tags** : sécurité, vie privée, Bluetooth
 
 ## Contenu de l'application (Règles › Contenu de l'application)

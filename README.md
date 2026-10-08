@@ -1,6 +1,6 @@
-# GlassRadar
+# RayFinder Pro
 
-Application Android (Kotlin + Jetpack Compose) qui détecte en Bluetooth Low Energy la présence de lunettes connectées Meta (Ray-Ban Meta, Oakley Meta…) et vibre quand une paire apparaît.
+Application Android éditée par SASU DataGrow (Kotlin + Jetpack Compose) qui détecte en Bluetooth Low Energy la présence de lunettes connectées Meta (Ray-Ban Meta, Oakley Meta…) et vibre quand une paire apparaît.
 
 ## Fonctionnement
 
@@ -13,6 +13,10 @@ L'application scanne les annonces BLE et repère les identifiants publiés par l
 La distance est estimée à partir du RSSI. Le switch « Afficher tous les appareils » sert à vérifier que le scan fonctionne sans lunettes à portée.
 
 Limites : les lunettes n'émettent pas en permanence (surtout en veille ou rangées dans leur étui), et un casque Quest peut aussi être signalé.
+
+## Site web (`docs/`)
+
+Accueil, [mentions légales](docs/mentions-legales.html) et [politique de confidentialité](docs/privacy.html), prévus pour GitHub Pages (`main`, dossier `/docs`). L'app y renvoie via `SITE_URL` dans `RadarScreen.kt`.
 
 ## Développement
 
@@ -29,11 +33,11 @@ Guide complet étape par étape : [`PUBLICATION.md`](PUBLICATION.md). Résumé :
 
 1. **Clé de signature** (à garder précieusement, hors du dépôt) :
    ```bash
-   keytool -genkey -v -keystore ~/glassradar-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+   keytool -genkey -v -keystore ~/rayfinder-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
    ```
 2. Créer `keystore.properties` à la racine (ignoré par git) :
    ```properties
-   storeFile=/Users/lespa/glassradar-upload.jks
+   storeFile=/Users/lespa/rayfinder-upload.jks
    storePassword=...
    keyAlias=upload
    keyPassword=...

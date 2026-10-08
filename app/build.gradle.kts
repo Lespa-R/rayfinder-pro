@@ -13,11 +13,11 @@ val keystoreProps = Properties().apply {
 }
 
 android {
-    namespace = "me.datagrow.glassradar"
+    namespace = "me.datagrow.rayfinderpro"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "me.datagrow.glassradar"
+        applicationId = "me.datagrow.rayfinderpro"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

@@ -1,4 +1,4 @@
-package me.datagrow.glassradar
+package me.datagrow.rayfinderpro
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager

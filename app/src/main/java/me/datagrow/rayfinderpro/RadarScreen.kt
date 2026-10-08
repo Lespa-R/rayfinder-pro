@@ -1,4 +1,4 @@
-package me.datagrow.glassradar
+package me.datagrow.rayfinderpro
 
 import android.Manifest
 import android.content.Context
@@ -38,6 +38,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -61,6 +63,7 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 
 private const val FORGET_AFTER_MS = 30_000L
+private const val SITE_URL = "https://lespa-r.github.io/rayfinder-pro"
 
 private val requiredPermissions =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) arrayOf(Manifest.permission.BLUETOOTH_SCAN)
@@ -183,8 +186,9 @@ fun RadarScreen(scanner: BleScanner) {
                             "et d'autres appareils Meta (casques Quest…) peuvent apparaître.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 16.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                     )
+                    LegalLinks()
                 }
             }
         }
@@ -252,6 +256,24 @@ private fun DeviceCard(device: SeenDevice, now: Long) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+@Composable
+private fun LegalLinks() {
+    val uriHandler = LocalUriHandler.current
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        TextButton(onClick = { uriHandler.openUri("$SITE_URL/mentions-legales.html") }) {
+            Text("Mentions légales", style = MaterialTheme.typography.bodySmall)
+        }
+        TextButton(onClick = { uriHandler.openUri("$SITE_URL/privacy.html") }) {
+            Text("Confidentialité", style = MaterialTheme.typography.bodySmall)
         }
     }
 }

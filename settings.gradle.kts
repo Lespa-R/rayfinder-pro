@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "GlassRadar"
+rootProject.name = "RayFinderPro"
 include(":app")

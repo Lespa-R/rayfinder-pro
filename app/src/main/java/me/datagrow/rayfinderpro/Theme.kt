@@ -1,4 +1,4 @@
-package me.datagrow.glassradar
+package me.datagrow.rayfinderpro
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -28,6 +28,6 @@ private val scheme = darkColorScheme(
 )
 
 @Composable
-fun GlassRadarTheme(content: @Composable () -> Unit) {
+fun RayFinderProTheme(content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = scheme, content = content)
 }

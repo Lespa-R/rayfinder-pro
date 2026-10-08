@@ -1,4 +1,4 @@
-package me.datagrow.glassradar
+package me.datagrow.rayfinderpro
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         scanner = BleScanner(applicationContext)
         enableEdgeToEdge(SystemBarStyle.dark(android.graphics.Color.TRANSPARENT))
-        setContent { GlassRadarTheme { RadarScreen(scanner) } }
+        setContent { RayFinderProTheme { RadarScreen(scanner) } }
     }
 
     // Le scan ne tourne qu'au premier plan (pas de service en arrière-plan)
