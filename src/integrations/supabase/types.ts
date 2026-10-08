@@ -142,10 +142,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      delete_my_account: {
-        Args: never
-        Returns: undefined
-      }
       city_stats_today: {
         Args: never
         Returns: {
@@ -153,6 +149,7 @@ export type Database = {
           detections: number
         }[]
       }
+      delete_my_account: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
