@@ -1,0 +1,171 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-alert: var(--alert);
+  --color-signal: var(--signal);
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  /* Charte RayFinder Pro : bleu nuit + corail (identique à l'app Android et aux visuels Play Store) */
+  --radius: 0.75rem;
+  --background: #0b1220;
+  --foreground: #f2f4f7;
+  --card: #101828;
+  --card-foreground: #f2f4f7;
+  --popover: #101828;
+  --popover-foreground: #f2f4f7;
+  --primary: #f97066;
+  --primary-foreground: #101828;
+  --secondary: #1d2939;
+  --secondary-foreground: #f2f4f7;
+  --muted: #1d2939;
+  --muted-foreground: #98a2b3;
+  --accent: #1d2939;
+  --accent-foreground: #f2f4f7;
+  --destructive: #f04438;
+  --destructive-foreground: #ffffff;
+  --border: #283447;
+  --input: #283447;
+  --ring: #f97066;
+  --alert: #f04438;
+  --signal: #17b26a;
+  --gradient-alert: linear-gradient(135deg, #f97066, #f04438);
+  --gradient-shell: radial-gradient(120% 70% at 85% -10%, rgb(249 112 102 / 0.16) 0%, transparent 55%),
+    radial-gradient(90% 60% at -10% 110%, rgb(23 178 106 / 0.08) 0%, transparent 60%);
+  --shadow-alert: 0 0 40px -10px rgb(240 68 56 / 0.55);
+  --shadow-panel: 0 18px 50px -24px rgb(0 0 0 / 0.9);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    background-image: var(--gradient-shell);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility panel {
+  background-color: color-mix(in oklab, var(--color-card) 82%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(8px);
+}
+
+@utility text-glow {
+  text-shadow: 0 0 18px color-mix(in oklab, var(--color-alert) 60%, transparent);
+}
+
+@utility alert-surface {
+  background-image: var(--gradient-alert);
+  color: var(--color-primary-foreground);
+  box-shadow: var(--shadow-alert);
+}
+
+@keyframes radar-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes radar-ping {
+  0% {
+    transform: scale(0.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes alert-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@utility animate-sweep {
+  animation: radar-sweep 3.4s linear infinite;
+}
+
+@utility animate-ping-out {
+  animation: radar-ping 2.4s ease-out infinite;
+}
+
+@utility animate-alert-pulse {
+  animation: alert-pulse 1.1s ease-in-out infinite;
+}
+
+@utility prose-legal {
+  & h2 {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  & p,
+  & li {
+    color: color-mix(in oklab, var(--color-foreground) 85%, transparent);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+  & ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  & a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  & strong {
+    color: var(--color-foreground);
+  }
+}

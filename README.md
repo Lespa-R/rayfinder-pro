@@ -1,52 +1,37 @@
 # RayFinder Pro
 
-Application Android éditée par SASU DataGrow (Kotlin + Jetpack Compose) qui détecte en Bluetooth Low Energy la présence de lunettes connectées Meta (Ray-Ban Meta, Oakley Meta…) et vibre quand une paire apparaît.
+Détecteur de lunettes connectées à caméra (Ray-Ban Meta, Oakley Meta), édité par SASU DataGrow.
 
-## Fonctionnement
+| Partie | Dossier | Techno |
+|---|---|---|
+| Site web (radar web, Safe Zone, stats, pages légales) | racine | Lovable · TanStack Start · Tailwind |
+| App Android | [`android/`](android/) | Kotlin · Jetpack Compose |
+| Backend commun (comptes, détections partagées, amis, alertes) | [`supabase/`](supabase/) | Lovable Cloud (Supabase) |
+| Visuels et fiche Play Store | [`play-store/`](play-store/) | HTML → PNG (`render.sh`) |
 
-L'application scanne les annonces BLE et repère les identifiants publiés par le Bluetooth SIG (voir `MetaSignatures.kt`) :
+Projet Lovable : https://lovable.dev/projects/b43a81f9-b0e5-4e15-8abc-95cd062cb987. Les commits poussés sur `main` y sont synchronisés.
 
-- Company ID `0x01AB` (Meta Platforms), `0x058E` (Meta Platforms Technologies), `0x0D53` (Luxottica)
-- UUID de service 16 bits Meta `0xFD5F`, `0xFEB7`, `0xFEB8`
-- nom d'appareil contenant « Ray-Ban », « Oakley » ou « Meta »
+Guide de publication sur Google Play, étape par étape : [`PUBLICATION.md`](PUBLICATION.md).
 
-La distance est estimée à partir du RSSI. Le switch « Afficher tous les appareils » sert à vérifier que le scan fonctionne sans lunettes à portée.
-
-Limites : les lunettes n'émettent pas en permanence (surtout en veille ou rangées dans leur étui), et un casque Quest peut aussi être signalé.
-
-## Site web (`docs/`)
-
-Accueil, [mentions légales](docs/mentions-legales.html) et [politique de confidentialité](docs/privacy.html), prévus pour GitHub Pages (`main`, dossier `/docs`). L'app y renvoie via `SITE_URL` dans `RadarScreen.kt`.
-
-## Développement
+## Site web
 
 ```bash
-./gradlew assembleDebug        # APK : app/build/outputs/apk/debug/app-debug.apk
-./gradlew installDebug         # sur un téléphone branché (débogage USB activé)
+npm install
+npm run dev
 ```
 
+Pages légales : `src/routes/mentions-legales.tsx`, `confidentialite.tsx`, `suppression-compte.tsx`. Infos éditeur et lien Play Store : `src/lib/site.ts`.
+
+## App Android
+
+```bash
+cd android
+./gradlew installDebug      # sur un téléphone branché (débogage USB)
+./gradlew bundleRelease     # fichier .aab pour Google Play (signature : android/keystore.properties)
+```
+
+- **Détection** (`MetaSignatures.kt`) : identifiants Bluetooth SIG de Meta (`0x01AB`, `0x058E`), de Luxottica (`0x0D53`), UUID de service `0xFD5F`, `0xFEB7` et `0xFEB8`, et nom de l'appareil. Le radar fonctionne sans compte ni réseau.
+- **Backend** (`Backend.kt`) : appels REST vers Lovable Cloud. L'URL et la clé publique sont lues dans le `.env` de Lovable au moment du build, sans être recopiées dans le code.
+- **Onglets** : Radar, Safe Zone, Stats, Compte (inscription et connexion par e-mail, ville, suppression de compte).
+
 Le scan BLE ne fonctionne pas dans l'émulateur : il faut tester sur un vrai téléphone.
-
-## Publication sur le Play Store
-
-Guide complet étape par étape : [`PUBLICATION.md`](PUBLICATION.md). Résumé :
-
-1. **Clé de signature** (à garder précieusement, hors du dépôt) :
-   ```bash
-   keytool -genkey -v -keystore ~/rayfinder-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
-   ```
-2. Créer `keystore.properties` à la racine (ignoré par git) :
-   ```properties
-   storeFile=/Users/lespa/rayfinder-upload.jks
-   storePassword=...
-   keyAlias=upload
-   keyPassword=...
-   ```
-3. Générer le bundle : `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`
-4. Dans la [Play Console](https://play.google.com/console) : créer l'app, importer l'`.aab` en test interne d'abord.
-5. Fiche, visuels et formulaires : tout est prêt dans [`play-store/fiche-play-store.md`](play-store/fiche-play-store.md) (textes à copier-coller, réponses aux questionnaires) et les PNG du dossier `play-store/`.
-   - **Politique de confidentialité** : publier `docs/privacy.html` sur une URL publique (GitHub Pages sur le dossier `docs/`, ou n'importe quel hébergement) et la renseigner.
-   - **Sécurité des données** : « Aucune donnée collectée ni partagée ».
-   - **Nom** : éviter « Meta » ou « Ray-Ban » dans le titre (marques déposées) ; on peut les citer dans la description pour dire ce que l'app détecte.
-   - Captures d'écran téléphone (au moins 2) + icône 512×512 + bannière 1024×500.
-6. Les comptes développeur personnels récents doivent faire tourner un **test fermé avec 12 testeurs pendant 14 jours** avant la mise en production.

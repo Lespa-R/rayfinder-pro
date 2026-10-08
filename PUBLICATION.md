@@ -2,6 +2,8 @@
 
 Ce guide liste tout ce qui reste à faire **de votre côté**. Le code, les visuels, les textes de la fiche, les mentions légales et la politique de confidentialité sont déjà prêts dans ce dépôt.
 
+Le dépôt contient deux choses : le **site web** (projet Lovable, à la racine) et l'**app Android** (dossier `android/`). Les deux partagent le même backend Lovable Cloud : mêmes comptes, mêmes données.
+
 Cochez les cases au fur et à mesure (`[ ]` → `[x]`).
 
 **Durée totale à prévoir : environ 3 semaines** avec un compte personnel (dont 14 jours de test fermé imposés par Google), quelques jours avec un compte organisation. Le travail effectif représente 3 heures environ.
@@ -10,7 +12,7 @@ Cochez les cases au fur et à mesure (`[ ]` → `[x]`).
 |---|---|---|---|
 | 1 | Tester l'app sur votre téléphone | 20 min | — |
 | 2 | Vérifier votre compte Google Play (déjà ouvert) | 5 min | — |
-| 3 | Mettre en ligne le site (mentions légales + confidentialité) | 10 min | — |
+| 3 | Publier le site Lovable (mentions légales, confidentialité, suppression de compte) | 5 min | — |
 | 4 | Créer la clé de signature et générer le fichier `.aab` | 15 min | — |
 | 5 | Créer l'application dans la Play Console | 15 min | — |
 | 6 | Remplir la fiche et les déclarations | 1 h | — |
@@ -37,7 +39,7 @@ Objectif : vérifier que tout marche sur un vrai téléphone avant d'engager les
 - [ ] Dans le Terminal, lancez :
 
 ```bash
-cd ~/Code/Lespa-R/rayfinder-pro && ./gradlew installDebug
+cd ~/Code/Lespa-R/rayfinder-pro/android && ./gradlew installDebug
 ```
 
 - [ ] L'icône **RayFinder Pro** (lunettes blanches sur fond bleu nuit) apparaît dans les applications.
@@ -50,6 +52,11 @@ cd ~/Code/Lespa-R/rayfinder-pro && ./gradlew installDebug
 - [ ] **Si vous avez accès à des lunettes Ray-Ban Meta** (les vôtres, celles d'un proche, ou en magasin d'optique) : allumez-les près du téléphone. L'écran doit passer au rouge et le téléphone vibrer.
   - Si rien ne se passe, laissez l'interrupteur « tout afficher » activé, faites une capture d'écran de la liste et envoyez-la-moi. J'ajusterai la détection.
 - [ ] Touchez **Arrêter le radar**, quittez l'app, rouvrez-la : rien ne doit planter.
+- [ ] Onglet **Compte** › **Pas encore de compte ? Inscrivez-vous** : créez votre compte, cliquez le lien de confirmation reçu par e-mail, puis connectez-vous.
+- [ ] Onglet **Compte** : renseignez votre ville et touchez **Enregistrer la ville**.
+- [ ] Onglet **Safe Zone** › **Alerter mes amis** : l'alerte apparaît dans « Alertes récentes ».
+- [ ] Onglet **Stats** : la page s'affiche (0 détection au début, c'est normal).
+- [ ] Gardez ce compte : il servira de **compte de test pour Google** (phase 6.1).
 
 > **À savoir** : la phase 1 est fortement recommandée, mais elle ne bloque pas les suivantes.
 
@@ -69,44 +76,24 @@ Votre compte développeur existe déjà : il reste seulement deux vérifications
 
 ---
 
-## Phase 3 — Mettre en ligne le site (mentions légales + confidentialité)
+## Phase 3 — Publier le site Lovable
 
-Google exige une URL publique vers la politique de confidentialité, car l'app utilise le Bluetooth. Trois pages sont prêtes dans le dossier `docs/` :
+Google exige des URL publiques pour la **politique de confidentialité** et pour la **suppression de compte**. Ces pages font partie du site Lovable (même projet que le backend) :
 
-| Page | Fichier | Adresse une fois en ligne (option A) |
-|---|---|---|
-| Accueil | `docs/index.html` | https://lespa-r.github.io/rayfinder-pro/ |
-| Mentions légales DataGrow | `docs/mentions-legales.html` | https://lespa-r.github.io/rayfinder-pro/mentions-legales.html |
-| Politique de confidentialité | `docs/privacy.html` | https://lespa-r.github.io/rayfinder-pro/privacy.html |
+| Page | Adresse une fois publiée |
+|---|---|
+| Accueil (radar web, Safe Zone, stats) | https://rayfinder-pro.lovable.app/ |
+| Mentions légales DataGrow | https://rayfinder-pro.lovable.app/mentions-legales |
+| Politique de confidentialité | https://rayfinder-pro.lovable.app/confidentialite |
+| Suppression de compte | https://rayfinder-pro.lovable.app/suppression-compte |
 
-**L'app contient déjà des liens « Mentions légales » et « Confidentialité »** (en bas de l'écran) qui pointent vers ces adresses GitHub Pages. Si vous choisissez l'option B, prévenez-moi : je changerai l'adresse dans l'app avant de générer le fichier de la phase 4.
+L'app Android contient des liens vers ces adresses (en bas du radar et dans l'onglet Compte).
 
-Choisissez **une** des trois options.
-
-### Option A — Rendre le dépôt GitHub public et activer GitHub Pages (gratuit, recommandé)
-
-Conséquences :
-- Le code source de l'app devient visible de tous. Il ne contient aucun secret : la clé de signature et les mots de passe sont exclus par `.gitignore`.
-- L'**historique** du dépôt contient l'ancien projet Lovable, dont un fichier `.env` avec l'adresse et la clé *publiable* de son projet Supabase. Cette clé est prévue pour être publique, mais si ce projet Supabase n'a plus d'usage, supprimez-le (voir « Nettoyage » en fin de guide).
-
-Étapes :
-- [ ] Allez sur https://github.com/Lespa-R/rayfinder-pro/settings
-- [ ] Tout en bas, section **Danger Zone** : **Change visibility › Change to public**, puis confirmez.
-- [ ] Dans le menu de gauche : **Pages**.
-- [ ] **Source** : `Deploy from a branch`. **Branch** : `main`, dossier `/docs`. Cliquez **Save**.
-- [ ] Attendez 1 à 2 minutes, puis ouvrez les trois adresses du tableau ci-dessus pour vérifier qu'elles s'affichent.
-- [ ] Notez l'adresse de la politique de confidentialité pour la phase 6.
-
-### Option B — Héberger les pages sur un site que vous possédez déjà
-
-- [ ] Copiez le contenu du dossier `docs/` sur le site (par exemple `https://datagrow.me/rayfinder/`), ou recopiez le texte des pages dans votre CMS.
-- [ ] Vérifiez que les pages sont accessibles **sans connexion**, depuis une fenêtre de navigation privée.
-- [ ] Dans `docs/mentions-legales.html`, remplacez le paragraphe « Le présent site est hébergé par GitHub, Inc. » par le nom et l'adresse de votre hébergeur.
-- [ ] Demandez-moi de changer l'adresse des liens dans l'app.
-
-### Option C — Me demander de le faire
-
-Dites-moi « option A » et je m'occupe du passage en public et de GitHub Pages.
+- [ ] Ouvrez le projet : https://lovable.dev/projects/b43a81f9-b0e5-4e15-8abc-95cd062cb987
+- [ ] En haut à droite : **Publish**. Choisissez l'adresse `rayfinder-pro` (donc `rayfinder-pro.lovable.app`), puis **Publish**. Ou demandez-moi de le faire.
+- [ ] Ouvrez les 4 adresses du tableau pour vérifier qu'elles s'affichent.
+- [ ] **Si l'adresse obtenue est différente** (nom déjà pris, ou domaine personnalisé comme `rayfinder.datagrow.me`), prévenez-moi : je change l'adresse dans l'app (`SITE_URL` dans `android/app/build.gradle.kts`) avant la phase 4.
+- [ ] Dans Lovable › **Cloud › Users › Authentication settings** (ou Auth › URL Configuration) : vérifiez que la **Site URL** est l'adresse publiée. C'est vers elle que pointe le lien de confirmation des e-mails d'inscription.
 
 ---
 
@@ -143,7 +130,7 @@ keytool -genkey -v -keystore ~/rayfinder-upload.jks -keyalg RSA -keysize 2048 -v
 
 ### 4.4 Indiquer la clé au projet
 
-- [ ] Créez le fichier `~/Code/Lespa-R/rayfinder-pro/keystore.properties` avec ce contenu, en remplaçant les mots de passe :
+- [ ] Créez le fichier `~/Code/Lespa-R/rayfinder-pro/android/keystore.properties` avec ce contenu, en remplaçant les mots de passe :
 
 ```properties
 storeFile=/Users/lespa/rayfinder-upload.jks
@@ -159,14 +146,14 @@ keyPassword=VOTRE_MOT_DE_PASSE
 - [ ] Lancez :
 
 ```bash
-cd ~/Code/Lespa-R/rayfinder-pro && ./gradlew bundleRelease
+cd ~/Code/Lespa-R/rayfinder-pro/android && ./gradlew bundleRelease
 ```
 
-- [ ] Le fichier à envoyer à Google est créé ici : `~/Code/Lespa-R/rayfinder-pro/app/build/outputs/bundle/release/app-release.aab` (environ 2 Mo).
+- [ ] Le fichier à envoyer à Google est créé ici : `~/Code/Lespa-R/rayfinder-pro/android/app/build/outputs/bundle/release/app-release.aab` (environ 2 Mo).
 - [ ] Pour l'ouvrir dans le Finder :
 
 ```bash
-open ~/Code/Lespa-R/rayfinder-pro/app/build/outputs/bundle/release/
+open ~/Code/Lespa-R/rayfinder-pro/android/app/build/outputs/bundle/release/
 ```
 
 ---
@@ -195,23 +182,30 @@ Toutes les réponses sont dans [`play-store/fiche-play-store.md`](play-store/fic
 
 ### 6.1 Contenu de l'application
 
-Menu de gauche : **Règles et programmes › Contenu de l'application**. Traitez chaque bloc :
+Menu de gauche : **Règles et programmes › Contenu de l'application**. Les réponses détaillées sont dans [`play-store/fiche-play-store.md`](play-store/fiche-play-store.md). Traitez chaque bloc :
 
-- [ ] **Règles de confidentialité** : collez l'URL de la politique de confidentialité (phase 3), par exemple `https://lespa-r.github.io/rayfinder-pro/privacy.html`.
-- [ ] **Accès aux applications** : `Toutes les fonctionnalités de mon application sont accessibles sans restriction d'accès`.
+- [ ] **Règles de confidentialité** : `https://rayfinder-pro.lovable.app/confidentialite`
+- [ ] **Accès aux applications** : `Tout ou partie des fonctionnalités de mon application sont soumises à des restrictions`. Cliquez **Ajouter des instructions** :
+  - Nom : `Compte de test`
+  - Nom d'utilisateur / Mot de passe : le compte créé à la phase 1.3. Créez-en un dédié si vous préférez ne pas donner le vôtre.
+  - Instructions : `Onglet Compte › Se connecter. Le radar (onglet Radar) fonctionne sans compte ; le compte débloque Safe Zone et Stats.`
 - [ ] **Annonces** : `Non, mon application ne contient pas d'annonces`.
 - [ ] **Classification du contenu** :
   - Adresse e-mail : `lespa+rayfinder@datagrow.me`
-  - Catégorie : `Toutes les autres catégories d'applications` (ou « Utilitaire, productivité, communication ou autre »).
-  - Répondez **Non** à toutes les questions : violence, sexualité, langage grossier, substances, jeux d'argent, interaction entre utilisateurs, partage de position, achats numériques.
-  - Enregistrez, puis **Envoyer**. La classification obtenue doit être « Tout public » (PEGI 3).
+  - Catégorie : `Toutes les autres catégories d'applications`.
+  - Violence, sexualité, langage grossier, substances, jeux d'argent, achats numériques : **Non**.
+  - « Les utilisateurs peuvent-ils interagir ou échanger des informations ? » : **Oui** (pseudos visibles, alertes entre amis).
+  - « L'application partage-t-elle la position actuelle de l'utilisateur avec d'autres utilisateurs ? » : **Non** (seule une ville saisie à la main).
+  - Enregistrez, puis **Envoyer**.
 - [ ] **Public cible et contenu** :
   - Tranche d'âge : cochez uniquement **18 ans et plus**. Vous évitez ainsi les règles renforcées pour les enfants.
   - « L'application pourrait-elle attirer les enfants ? » : **Non**.
 - [ ] **Applications d'actualités** : **Non**.
-- [ ] **Sécurité des données** :
-  - « Votre application collecte-t-elle ou partage-t-elle des types de données utilisateur requis ? » : **Non**.
-  - Le résumé doit afficher « Aucune donnée collectée » et « Aucune donnée partagée avec des tiers ». Enregistrez, puis **Envoyer**.
+- [ ] **Sécurité des données** : suivez le tableau de la section « Sécurité des données » du fichier fiche. En résumé :
+  - Collecte de données : **Oui** ; chiffrement en transit : **Oui** ; suppression possible : **Oui**.
+  - **URL de suppression du compte** : `https://rayfinder-pro.lovable.app/suppression-compte`
+  - Types collectés (tous **facultatifs**, **non partagés**) : adresse e-mail, nom, ID utilisateur, position approximative, autre contenu généré par l'utilisateur, autres actions.
+  - Enregistrez, puis **Envoyer**.
 - [ ] **Applications gouvernementales** : **Non**.
 - [ ] **Fonctionnalités financières** : `Mon application ne fournit aucune fonctionnalité financière`.
 - [ ] **Santé** : `Mon application ne propose aucune fonctionnalité de santé`.
@@ -242,7 +236,7 @@ Menu : **Présence sur le Store › Paramètres du Store**.
 
 - [ ] **Catégorie** : `Outils`
 - [ ] **Tags** : jusqu'à 5, par exemple sécurité, confidentialité, Bluetooth.
-- [ ] **Coordonnées** : e-mail `lespa+rayfinder@datagrow.me` ; site web : `https://lespa-r.github.io/rayfinder-pro/` (option A) ; téléphone facultatif.
+- [ ] **Coordonnées** : e-mail `lespa+rayfinder@datagrow.me` ; site web : `https://rayfinder-pro.lovable.app` ; téléphone facultatif.
 - [ ] **Enregistrer**.
 
 ### 6.4 Pays de distribution
@@ -326,6 +320,7 @@ Après 14 jours avec au moins 12 testeurs, le Tableau de bord affiche **Demander
 - [ ] **Suivant › Enregistrer**, puis **Vue d'ensemble de la publication › Envoyer pour examen**.
 - [ ] L'examen prend en général 1 à 3 jours, parfois jusqu'à 7. Vous recevez un e-mail quand l'app est en ligne.
 - [ ] Vérifiez la page publique : `https://play.google.com/store/apps/details?id=me.datagrow.rayfinderpro`
+- [ ] Demandez-moi d'activer le bouton « Google Play » du site (`PLAY_STORE_LIVE = true` dans `src/lib/site.ts`), ou demandez-le à Lovable.
 
 ---
 
@@ -333,8 +328,8 @@ Après 14 jours avec au moins 12 testeurs, le Tableau de bord affiche **Demander
 
 À chaque nouvelle version :
 
-1. Demandez-moi la modification. J'**augmente `versionCode`** (1 → 2 → 3…) et `versionName` dans `app/build.gradle.kts`. Google refuse un fichier dont le `versionCode` a déjà été envoyé.
-2. Lancez `./gradlew bundleRelease`.
+1. Demandez-moi la modification. J'**augmente `versionCode`** (1 → 2 → 3…) et `versionName` dans `android/app/build.gradle.kts`. Google refuse un fichier dont le `versionCode` a déjà été envoyé.
+2. Lancez `./gradlew bundleRelease` depuis le dossier `android/`.
 3. Dans la Play Console : **Production › Créer une release**, importez le nouveau `.aab`, ajoutez des notes de version, puis **Envoyer pour examen**.
 
 ---
@@ -344,21 +339,23 @@ Après 14 jours avec au moins 12 testeurs, le Tableau de bord affiche **Demander
 | Problème | Que faire |
 |---|---|
 | `./gradlew installDebug` affiche « no connected devices » | Vérifiez le câble (certains câbles ne font que la charge), réacceptez la fenêtre « Autoriser le débogage USB », débranchez puis rebranchez |
-| `bundleRelease` affiche une erreur de mot de passe | Vérifiez `keystore.properties` : chemin exact du `.jks`, mots de passe sans espace en fin de ligne |
+| `bundleRelease` affiche une erreur de mot de passe | Vérifiez `android/keystore.properties` : chemin exact du `.jks`, mots de passe sans espace en fin de ligne |
 | Google refuse l'app pour « usurpation » ou « marque » | Le nom contient déjà le mot « Meta » ailleurs que dans la description ? Envoyez-moi le message de refus et j'adapte les textes |
 | Google signale la permission Bluetooth | Collez la justification de `play-store/fiche-play-store.md` dans le formulaire de réponse |
 | Le compteur des 14 jours ne démarre pas | Moins de 12 testeurs ont **accepté** le lien. Une simple invitation ne compte pas. Relancez-les |
 | « Votre application cible une version d'API trop ancienne » | Demandez-moi de passer à la dernière version d'Android exigée par Google (cible actuelle : API 36) |
+| L'onglet Compte dit « Service indisponible » | Le fichier `.env` (géré par Lovable, à la racine) est absent ou incomplet au moment du build : faites `git pull`, puis régénérez l'app |
+| Le lien de confirmation d'inscription mène à une page d'erreur | Vérifiez la **Site URL** dans les réglages d'authentification Lovable Cloud (phase 3) |
 | Vous avez perdu la clé `.jks` | Play Console › **Test et publication › Configuration › Intégrité de l'application › Signature d'application** › demander la réinitialisation de la clé d'importation |
 
 ---
 
-## Nettoyage de l'ancien projet Lovable
+## Cohabitation Lovable et app Android
 
-Le dépôt `rayfinder-pro` était relié au projet Lovable « RayFinder Pro ». Il contient maintenant l'app Android, que Lovable ne sait pas afficher.
-
-- [ ] Dans Lovable (https://lovable.dev/projects/b43a81f9-b0e5-4e15-8abc-95cd062cb987) : si le site était publié, **dépubliez-le**, puis supprimez le projet ou **déconnectez GitHub** (Settings › GitHub › Disconnect). Sinon, une modification faite dans Lovable pourrait réécrire le dépôt.
-- [ ] Dans Supabase (https://supabase.com/dashboard) : supprimez le projet lié à l'ancien RayFinder Pro s'il n'a plus d'usage. L'app Android n'en a pas besoin.
+- **Lovable reste connecté au dépôt** : ne le déconnectez pas. Les modifications faites dans Lovable arrivent sur GitHub, et inversement.
+- Lovable ignore le dossier `android/`. Évitez seulement de lui demander de supprimer ou déplacer des dossiers à la racine.
+- **Ne modifiez pas les tables du backend** (`profiles`, `sightings`, `friends`, `safe_zone_alerts`) ni les fonctions `city_stats_today` et `delete_my_account` sans me prévenir : l'app Android les utilise directement. Ajouter une colonne ou une table ne pose pas de problème. En renommer ou en supprimer une casse l'app déjà installée chez les utilisateurs.
+- Si vous ajoutez une connexion Google à l'app Android plus tard, il faudra une configuration spécifique : dans l'app, seule la connexion par e-mail est proposée pour l'instant.
 - [ ] Sur GitHub : le dépôt temporaire `Lespa-R/glass-radar` fait doublon. Supprimez-le dans https://github.com/Lespa-R/glass-radar/settings › Danger Zone › **Delete this repository**.
 
 ---
@@ -367,10 +364,11 @@ Le dépôt `rayfinder-pro` était relié au projet Lovable « RayFinder Pro ». 
 
 | Fichier | Usage |
 |---|---|
-| `app/build/outputs/bundle/release/app-release.aab` | Fichier à envoyer à Google (généré à la phase 4.5) |
+| `android/app/build/outputs/bundle/release/app-release.aab` | Fichier à envoyer à Google (généré à la phase 4.5) |
 | `play-store/fiche-play-store.md` | Textes et réponses à copier-coller |
 | `play-store/icon-512.png` | Icône Play Store |
 | `play-store/feature-graphic-1024x500.png` | Image de présentation |
 | `play-store/screenshot-1.png` à `-4.png` | Captures d'écran |
-| `docs/` | Site à mettre en ligne : accueil, mentions légales, politique de confidentialité |
-| `~/rayfinder-upload.jks` + `keystore.properties` | Clé de signature (**jamais sur GitHub**, à sauvegarder) |
+| `src/routes/` | Site Lovable, dont `mentions-legales.tsx`, `confidentialite.tsx`, `suppression-compte.tsx` |
+| `src/lib/site.ts` | Infos éditeur DataGrow, lien Play Store (`PLAY_STORE_LIVE` à passer à `true` après publication) |
+| `~/rayfinder-upload.jks` + `android/keystore.properties` | Clé de signature (**jamais sur GitHub**, à sauvegarder) |
