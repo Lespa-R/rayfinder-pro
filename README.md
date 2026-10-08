@@ -25,6 +25,8 @@ Le scan BLE ne fonctionne pas dans l'émulateur : il faut tester sur un vrai té
 
 ## Publication sur le Play Store
 
+Guide complet étape par étape : [`PUBLICATION.md`](PUBLICATION.md). Résumé :
+
 1. **Clé de signature** (à garder précieusement, hors du dépôt) :
    ```bash
    keytool -genkey -v -keystore ~/glassradar-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
@@ -38,8 +40,6 @@ Le scan BLE ne fonctionne pas dans l'émulateur : il faut tester sur un vrai té
    ```
 3. Générer le bundle : `./gradlew bundleRelease` → `app/build/outputs/bundle/release/app-release.aab`
 4. Dans la [Play Console](https://play.google.com/console) : créer l'app, importer l'`.aab` en test interne d'abord.
-Guide complet étape par étape : [`PUBLICATION.md`](PUBLICATION.md).
-
 5. Fiche, visuels et formulaires : tout est prêt dans [`play-store/fiche-play-store.md`](play-store/fiche-play-store.md) (textes à copier-coller, réponses aux questionnaires) et les PNG du dossier `play-store/`.
    - **Politique de confidentialité** : publier `docs/privacy.html` sur une URL publique (GitHub Pages sur le dossier `docs/`, ou n'importe quel hébergement) et la renseigner.
    - **Sécurité des données** : « Aucune donnée collectée ni partagée ».
