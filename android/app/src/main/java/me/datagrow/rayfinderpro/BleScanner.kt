@@ -90,12 +90,44 @@ class BleScanner(context: Context) {
     @SuppressLint("MissingPermission")
     fun stop() {
         if (!_scanning.value) return
+        if (demoMode) {
+            demoMode = false
+            _scanning.value = false
+            _devices.value = emptyMap()
+            return
+        }
         runCatching { adapter?.bluetoothLeScanner?.stopScan(callback) }
         _scanning.value = false
     }
 
+    /**
+     * Mode démo (versions de debug uniquement) : simule des appareils pour vérifier l'interface
+     * et produire des captures d'écran, l'émulateur ne pouvant pas émettre de signaux BLE.
+     */
+    private var demoMode = false
+
+    fun startDemo() {
+        demoMode = true
+        val now = System.currentTimeMillis()
+        val demo = listOf(
+            SeenDevice("D4:3A:1F:00:00:01", "Ray-Ban Meta", "Fabricant : Meta Platforms", -54, now, now),
+            SeenDevice("D4:3A:1F:00:00:02", null, "Service Meta 0xFD5F", -71, now, now),
+            SeenDevice("A0:11:22:33:44:55", "Galaxy Buds2 Pro", null, -66, now, now),
+            SeenDevice("B8:27:EB:12:34:56", "Mi Band 8", null, -83, now, now),
+        )
+        _devices.value = demo.associateBy { it.address }
+        _scanning.value = true
+        demo.firstOrNull { it.isMeta }?.let { onNewMetaDevice?.invoke(it) }
+    }
+
     /** Oublie les appareils non revus depuis [maxAgeMs]. */
     fun prune(maxAgeMs: Long) {
+        if (demoMode) {
+            // En démo : les appareils restent, leur signal varie légèrement
+            val now = System.currentTimeMillis()
+            _devices.update { map -> map.mapValues { (_, d) -> d.copy(rssi = (d.rssi + (-2..2).random()).coerceIn(-90, -45), lastSeen = now) } }
+            return
+        }
         val limit = System.currentTimeMillis() - maxAgeMs
         _devices.update { map -> map.filterValues { it.lastSeen >= limit } }
     }

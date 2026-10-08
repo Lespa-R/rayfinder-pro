@@ -11,15 +11,16 @@ import android.os.VibratorManager
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,17 +28,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -51,12 +51,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
@@ -128,95 +129,154 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
         }
     }
 
-    val metaDevices = devices.values.filter { it.isMeta }.sortedByDescending { it.rssi }
-    val listed = if (showAll) devices.values.sortedByDescending { it.rssi } else metaDevices
+    // Tri stable : Meta d'abord, puis par palier de proximité, puis par ordre d'apparition.
+    // Trier sur le RSSI brut ferait sauter les cartes à chaque variation du signal.
+    val stableOrder = compareByDescending<SeenDevice> { it.isMeta }
+        .thenByDescending { proximityLevel(it.rssi) }
+        .thenBy { it.firstSeen }
+        .thenBy { it.address }
+    val allDevices = devices.values.sortedWith(stableOrder)
+    val metaDevices = allDevices.filter { it.isMeta }
+    val listed = if (showAll) allDevices else metaDevices
+    val alert = metaDevices.isNotEmpty()
 
-    Column(
-        modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    LazyColumn(
+        modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Spacer(Modifier.height(24.dp))
-        StatusBadge(scanning = scanning, alert = metaDevices.isNotEmpty())
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = when {
-                !scanning -> "Radar à l'arrêt"
-                metaDevices.isEmpty() -> "Aucune lunette Meta détectée"
-                metaDevices.size == 1 -> "Lunettes Meta à proximité !"
-                else -> "${metaDevices.size} appareils Meta à proximité !"
-            },
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = if (scanning) "Recherche Bluetooth en cours…" else "Lancez le radar pour analyser les alentours",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.height(16.dp))
+        item(key = "header") { RadarHeader(scanning, alert) }
 
-        when {
-            !scanner.hasBluetooth -> Warning("Cet appareil ne prend pas en charge le Bluetooth Low Energy.")
-            !scanner.isBluetoothOn && !scanning -> {
-                Warning("Le Bluetooth est désactivé.")
-                OutlinedButton(onClick = {
-                    context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
-                }) { Text("Ouvrir les réglages Bluetooth") }
-            }
-            else -> Button(
-                onClick = { if (scanning) scanner.stop() else startScan() },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(if (scanning) "Arrêter le radar" else "Lancer le radar") }
-        }
-        if (permissionDenied) {
-            Warning("Autorisation refusée : l'application ne peut pas scanner sans l'accès aux appareils à proximité.")
-        }
-        error?.let { Warning(it) }
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text("Afficher tous les appareils Bluetooth", Modifier.weight(1f))
-            Switch(checked = showAll, onCheckedChange = { showAll = it })
+        item(key = "scope") {
+            RadarScope(
+                devices = allDevices,
+                scanning = scanning,
+                alert = alert,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 56.dp, vertical = 4.dp),
+            )
         }
 
-        LazyColumn(
-            Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(listed, key = { it.address }) { device ->
-                DeviceCard(
-                    device = device,
-                    now = now,
-                    // Partage proposé seulement pour les lunettes identifiées, et une fois par appareil
-                    onShare = if (device.isMeta && session != null && device.address !in shared) {
-                        { share(device) }
-                    } else null,
-                    isShared = device.address in shared,
-                )
-            }
-            item {
-                if (session == null && metaDevices.isNotEmpty()) {
+        item(key = "status") {
+            AnimatedContent(
+                targetState = Triple(scanning, metaDevices.size, alert),
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                label = "status",
+            ) { (isScanning, count, isAlert) ->
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        "Créez un compte (onglet Compte) pour partager une détection et alerter vos amis.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp),
+                        when {
+                            !isScanning -> "Radar en veille"
+                            count == 0 -> "Aucune lunette détectée"
+                            count == 1 -> "Lunettes Meta à proximité"
+                            else -> "$count appareils Meta à proximité"
+                        },
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = if (isAlert) AlertRed else Color.White,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        when {
+                            !isScanning -> "Lancez le radar pour analyser les alentours"
+                            isAlert -> "Quelqu'un peut filmer près de vous"
+                            else -> "Analyse des signaux Bluetooth en cours…"
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Muted,
+                        textAlign = TextAlign.Center,
                     )
                 }
+            }
+        }
+
+        item(key = "action") {
+            Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                when {
+                    !scanner.hasBluetooth -> Notice("Cet appareil ne prend pas en charge le Bluetooth Low Energy.")
+                    !scanner.isBluetoothOn && !scanning -> {
+                        Notice("Le Bluetooth est désactivé.")
+                        BigButton(
+                            "Activer le Bluetooth",
+                            onClick = { context.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS)) },
+                            icon = R.drawable.ic_bluetooth,
+                        )
+                    }
+                    else -> BigButton(
+                        text = if (scanning) "Arrêter le radar" else "Lancer le radar",
+                        onClick = { if (scanning) scanner.stop() else startScan() },
+                        icon = R.drawable.ic_radar,
+                        container = if (scanning) NavyRaised else Coral,
+                        content = if (scanning) Color.White else NavySurface,
+                    )
+                }
+                if (permissionDenied) {
+                    Notice("Autorisation refusée : sans l'accès aux appareils à proximité, le radar ne peut pas scanner.")
+                }
+                error?.let { Notice(it) }
+            }
+        }
+
+        if (scanning || devices.isNotEmpty()) {
+            item(key = "filter") {
+                SegmentedToggle(
+                    options = listOf("Lunettes Meta · ${metaDevices.size}", "Tout · ${allDevices.size}"),
+                    selected = if (showAll) 1 else 0,
+                    onSelect = { showAll = it == 1 },
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+            }
+        }
+
+        items(listed, key = { it.address }) { device ->
+            DeviceCard(
+                device = device,
+                now = now,
+                // Partage proposé seulement pour les lunettes identifiées, une fois par appareil
+                onShare = if (device.isMeta && session != null && device.address !in shared) {
+                    { share(device) }
+                } else null,
+                isShared = device.address in shared,
+                modifier = Modifier.animateItem(),
+            )
+        }
+
+        if (scanning && listed.isEmpty()) {
+            item(key = "empty") {
                 Text(
-                    "Détection basée sur les signaux Bluetooth publics émis par les lunettes. " +
-                        "Elle n'est pas infaillible : des lunettes éteintes ou en veille profonde peuvent ne rien émettre, " +
-                        "et d'autres appareils Meta (casques Quest…) peuvent apparaître.",
+                    if (showAll) "Aucun appareil Bluetooth pour l'instant…" else "Rien à signaler. Le radar continue de surveiller.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Muted,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                )
+            }
+        }
+
+        if (session == null && alert) {
+            item(key = "account-hint") {
+                Text(
+                    "Créez un compte (onglet Compte) pour partager une détection et alerter vos amis.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 16.dp),
+                    color = Muted,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+
+        item(key = "footer") {
+            Column(Modifier.padding(top = 16.dp)) {
+                Text(
+                    "Détection basée sur les signaux Bluetooth publics des lunettes. Elle n'est pas infaillible : " +
+                        "des lunettes éteintes ou en veille peuvent ne rien émettre, et d'autres appareils Meta peuvent apparaître.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Muted.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 LegalLinks()
             }
@@ -225,71 +285,95 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
 }
 
 @Composable
-private fun StatusBadge(scanning: Boolean, alert: Boolean) {
-    val color = when {
-        alert -> AlertRed
-        scanning -> SafeGreen
-        else -> MaterialTheme.colorScheme.outline
-    }
-    val pulse by rememberInfiniteTransition(label = "pulse").animateFloat(
-        initialValue = 1f,
-        targetValue = if (scanning) 1.15f else 1f,
-        animationSpec = infiniteRepeatable(tween(if (alert) 400 else 1200), RepeatMode.Reverse),
-        label = "scale",
-    )
-    Box(
-        Modifier
-            .size(140.dp)
-            .scale(pulse)
-            .background(color.copy(alpha = 0.18f), CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
+private fun RadarHeader(scanning: Boolean, alert: Boolean) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text("RayFinder", style = MaterialTheme.typography.titleLarge)
+        Text(" Pro", style = MaterialTheme.typography.titleLarge, color = Coral)
+        Spacer(Modifier.weight(1f))
+        val color by animateColorAsState(
+            when {
+                alert -> AlertRed
+                scanning -> SafeGreen
+                else -> Muted
+            },
+            label = "chip",
+        )
+        Row(
             Modifier
-                .size(88.dp)
-                .background(color, CircleShape),
-            contentAlignment = Alignment.Center,
+                .clip(RoundedCornerShape(50))
+                .background(color.copy(alpha = 0.14f))
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(if (alert) "!" else "👓", color = Color.White, style = MaterialTheme.typography.headlineLarge)
+            Box(
+                Modifier
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(color),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                when {
+                    alert -> "Alerte"
+                    scanning -> "Scan actif"
+                    else -> "En veille"
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = color,
+            )
         }
     }
 }
 
 @Composable
-private fun DeviceCard(device: SeenDevice, now: Long, onShare: (() -> Unit)?, isShared: Boolean) {
-    val (proximity, color) = when {
-        device.rssi >= -60 -> "Très proche (< 2 m)" to AlertRed
-        device.rssi >= -75 -> "Proche (quelques mètres)" to Color(0xFFDC6803)
-        else -> "À portée (> 5 m)" to MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    Card(
-        colors = if (device.isMeta) CardDefaults.cardColors(containerColor = AlertRed.copy(alpha = 0.16f))
-        else CardDefaults.cardColors(),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(Modifier.padding(16.dp)) {
-            Text(
-                device.name ?: if (device.isMeta) "Lunettes Meta (nom masqué)" else "Appareil inconnu",
-                fontWeight = FontWeight.SemiBold,
-            )
-            device.metaReason?.let {
-                Text(it, style = MaterialTheme.typography.bodySmall, color = AlertRed)
-            }
-            Spacer(Modifier.height(4.dp))
-            Row {
-                Text(proximity, color = color, modifier = Modifier.weight(1f))
-                Text("${device.rssi} dBm", style = MaterialTheme.typography.bodySmall)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
+private fun DeviceCard(
+    device: SeenDevice,
+    now: Long,
+    onShare: (() -> Unit)?,
+    isShared: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val (proximity, color) = proximityOf(device.rssi)
+    val seconds = ((now - device.lastSeen) / 1000).coerceAtLeast(0)
+    AppCard(modifier.fillMaxWidth(), color = if (device.isMeta) AlertRed.copy(alpha = 0.10f) else NavyCard) {
+        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            IconBadge(if (device.isMeta) R.drawable.ic_glasses else R.drawable.ic_bluetooth, if (device.isMeta) color else Muted)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
                 Text(
-                    "Vu il y a ${((now - device.lastSeen) / 1000).coerceAtLeast(0)} s",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
+                    device.name ?: if (device.isMeta) "Lunettes Meta" else "Appareil inconnu",
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
-                when {
-                    isShared -> Text("Partagé ✓", style = MaterialTheme.typography.bodySmall, color = SafeGreen)
-                    onShare != null -> TextButton(onClick = onShare) { Text("Partager") }
+                Text(
+                    "$proximity · ${if (seconds < 2) "à l'instant" else "il y a $seconds s"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (device.isMeta) color else Muted,
+                )
+                device.metaReason?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = Muted, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            }
+            Spacer(Modifier.width(10.dp))
+            SignalBars(device.rssi, if (device.isMeta) color else Muted)
+            if (isShared || onShare != null) {
+                Spacer(Modifier.width(10.dp))
+                FilledTonalIconButton(
+                    onClick = { onShare?.invoke() },
+                    enabled = !isShared,
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = Coral.copy(alpha = 0.16f),
+                        contentColor = Coral,
+                        disabledContainerColor = SafeGreen.copy(alpha = 0.16f),
+                        disabledContentColor = SafeGreen,
+                    ),
+                ) {
+                    Icon(
+                        painterResource(if (isShared) R.drawable.ic_check else R.drawable.ic_share),
+                        contentDescription = if (isShared) "Partagé" else "Partager",
+                        modifier = Modifier.size(18.dp),
+                    )
                 }
             }
         }
@@ -297,13 +381,13 @@ private fun DeviceCard(device: SeenDevice, now: Long, onShare: (() -> Unit)?, is
 }
 
 @Composable
-private fun Warning(text: String) {
+private fun Notice(text: String) {
     Text(
         text,
-        color = MaterialTheme.colorScheme.error,
+        color = Coral,
         style = MaterialTheme.typography.bodyMedium,
         textAlign = TextAlign.Center,
-        modifier = Modifier.padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 

@@ -34,4 +34,10 @@ cd android
 - **Backend** (`Backend.kt`) : appels REST vers Lovable Cloud. L'URL et la clé publique sont lues dans le `.env` de Lovable au moment du build, sans être recopiées dans le code.
 - **Onglets** : Radar, Safe Zone, Stats, Compte (inscription et connexion par e-mail, ville, suppression de compte).
 
-Le scan BLE ne fonctionne pas dans l'émulateur : il faut tester sur un vrai téléphone.
+Le scan BLE ne fonctionne pas dans l'émulateur. Pour vérifier l'interface, le **mode démo** (versions de debug uniquement) simule des appareils :
+
+```bash
+adb shell am start -n me.datagrow.rayfinderpro/.MainActivity --ez demo true
+```
+
+Les visuels Play Store (`play-store/raw/`) sont de vraies captures faites dans ce mode.

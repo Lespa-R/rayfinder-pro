@@ -16,6 +16,8 @@ class MainActivity : ComponentActivity() {
         scanner = BleScanner(applicationContext)
         backend = Backend(applicationContext)
         enableEdgeToEdge(SystemBarStyle.dark(android.graphics.Color.TRANSPARENT))
+        // adb shell am start -n me.datagrow.rayfinderpro/.MainActivity --ez demo true
+        if (BuildConfig.DEBUG && intent.getBooleanExtra("demo", false)) scanner.startDemo()
         setContent { RayFinderProTheme { AppRoot(scanner, backend) } }
     }
 

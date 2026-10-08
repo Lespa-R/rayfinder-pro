@@ -127,7 +127,10 @@ function Hero() {
           className="absolute -inset-10 -z-10 rounded-full opacity-60 blur-3xl"
           style={{ background: "radial-gradient(circle, rgb(240 68 56 / 0.35), transparent 65%)" }}
         />
-        <PhoneShot src="/screens/app-1.webp" alt="Écran d'alerte : lunettes Meta très proches" />
+        <PhoneShot
+          src="/screens/app-1.webp"
+          alt="Écran d’alerte : deux appareils Meta à proximité sur le radar"
+        />
       </div>
     </section>
   );
@@ -136,7 +139,7 @@ function Hero() {
 function PhoneShot({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="overflow-hidden rounded-t-[2.2rem] [mask-image:linear-gradient(to_bottom,black_75%,transparent)]">
-      <img src={src} alt={alt} width={615} height={1065} className="block w-full" loading="lazy" />
+      <img src={src} alt={alt} width={609} height={1062} className="block w-full" loading="lazy" />
     </div>
   );
 }
