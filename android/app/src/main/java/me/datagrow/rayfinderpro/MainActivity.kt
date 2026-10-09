@@ -21,9 +21,14 @@ class MainActivity : ComponentActivity() {
         setContent { RayFinderProTheme { AppRoot(scanner, backend) } }
     }
 
+    override fun onStart() {
+        super.onStart()
+        scanner.attach()
+    }
+
     // Le scan ne tourne qu'au premier plan (pas de service en arrière-plan)
     override fun onStop() {
         super.onStop()
-        scanner.stop()
+        scanner.detach()
     }
 }

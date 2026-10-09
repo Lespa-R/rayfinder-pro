@@ -79,6 +79,9 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
     val devices by scanner.devices.collectAsState()
     val scanning by scanner.scanning.collectAsState()
     val error by scanner.error.collectAsState()
+    val bluetoothOn by scanner.bluetoothOn.collectAsState()
+    // Appareil dont la fiche détaillée est ouverte (dernier état connu conservé s'il disparaît)
+    var selected by remember { mutableStateOf<SeenDevice?>(null) }
     var showAll by rememberSaveable { mutableStateOf(false) }
     var permissionDenied by remember { mutableStateOf(false) }
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -132,6 +135,7 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
     // Tri stable : Meta d'abord, puis par palier de proximité, puis par ordre d'apparition.
     // Trier sur le RSSI brut ferait sauter les cartes à chaque variation du signal.
     val stableOrder = compareByDescending<SeenDevice> { it.isMeta }
+        .thenByDescending { it.isIdentified }
         .thenByDescending { proximityLevel(it.rssi) }
         .thenBy { it.firstSeen }
         .thenBy { it.address }
@@ -195,7 +199,7 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
             Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 when {
                     !scanner.hasBluetooth -> Notice("Cet appareil ne prend pas en charge le Bluetooth Low Energy.")
-                    !scanner.isBluetoothOn && !scanning -> {
+                    !bluetoothOn && !scanning -> {
                         Notice("Le Bluetooth est désactivé.")
                         BigButton(
                             "Activer le Bluetooth",
@@ -238,6 +242,7 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
                     { share(device) }
                 } else null,
                 isShared = device.address in shared,
+                onOpen = { selected = device },
                 modifier = Modifier.animateItem(),
             )
         }
@@ -281,6 +286,21 @@ fun RadarScreen(scanner: BleScanner, backend: Backend, modifier: Modifier = Modi
                 LegalLinks()
             }
         }
+    }
+
+    selected?.let { picked ->
+        // Version à jour si l'appareil est toujours détecté, sinon le dernier état connu
+        val device = devices[picked.address] ?: picked
+        DeviceDetailsSheet(
+            device = device,
+            now = now,
+            stillVisible = devices.containsKey(picked.address),
+            onShare = if (device.isMeta && session != null && device.address !in shared) {
+                { share(device) }
+            } else null,
+            isShared = device.address in shared,
+            onDismiss = { selected = null },
+        )
     }
 }
 
@@ -331,17 +351,18 @@ private fun DeviceCard(
     now: Long,
     onShare: (() -> Unit)?,
     isShared: Boolean,
+    onOpen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val (proximity, color) = proximityOf(device.rssi)
     val seconds = ((now - device.lastSeen) / 1000).coerceAtLeast(0)
-    AppCard(modifier.fillMaxWidth(), color = if (device.isMeta) AlertRed.copy(alpha = 0.10f) else NavyCard) {
+    AppCard(modifier.fillMaxWidth(), color = if (device.isMeta) AlertRed.copy(alpha = 0.10f) else NavyCard, onClick = onOpen) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconBadge(if (device.isMeta) R.drawable.ic_glasses else R.drawable.ic_bluetooth, if (device.isMeta) color else Muted)
+            IconBadge(device.icon(), if (device.isMeta) color else if (device.isIdentified) Coral else Muted)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    device.name ?: if (device.isMeta) "Lunettes Meta" else "Appareil inconnu",
+                    device.displayName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -351,7 +372,7 @@ private fun DeviceCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = if (device.isMeta) color else Muted,
                 )
-                device.metaReason?.let {
+                device.secondaryLine()?.let {
                     Text(it, style = MaterialTheme.typography.bodySmall, color = Muted, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
