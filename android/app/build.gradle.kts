@@ -32,8 +32,8 @@ android {
         applicationId = "me.datagrow.rayfinderpro"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2"
 
         buildConfigField("String", "SUPABASE_URL", "\"${lovableEnv["VITE_SUPABASE_URL"].orEmpty()}\"")
         buildConfigField("String", "SUPABASE_KEY", "\"${lovableEnv["VITE_SUPABASE_PUBLISHABLE_KEY"].orEmpty()}\"")
